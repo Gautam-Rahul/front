@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XYZ Retail - Cloud Architecture</title>
+    <style>
+        :root {
+            --public-cloud: #3498db;
+            --private-cloud: #2c3e50;
+            --middleware: #e74c3c;
+            --data-flow: #9b59b6;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .architecture-diagram {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .diagram-container {
+            width: 100%;
+            overflow: auto;
+            margin: 20px 0;
+        }
+        
+        svg {
+            display: block;
+            margin: 0 auto;
+            min-width: 800px;
+        }
+        
+        .cloud {
+            stroke-width: 2;
+            stroke: #fff;
+            fill-opacity: 0.8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .public-cloud { fill: var(--public-cloud); }
+        .private-cloud { fill: var(--private-cloud); }
+        .middleware { fill: var(--middleware); }
+        
+        .cloud:hover {
+            stroke-width: 3;
+            fill-opacity: 1;
+        }
+        
+        .data-flow {
+            stroke: var(--data-flow);
+            stroke-width: 2;
+            stroke-dasharray: 5,5;
+            fill: none;
+            marker-end: url(#arrowhead);
+            animation: flowAnimation 3s infinite linear;
+        }
+        
+        @keyframes flowAnimation {
+            from { stroke-dashoffset: 20; }
+            to { stroke-dashoffset: 0; }
+        }
+        
+        .component-label {
+            font-size: 12px;
+            font-weight: bold;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .component-details {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .detail-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-top: 4px solid var(--public-cloud);
+        }
+        
+        .detail-card.private {
+            border-top-color: var(--private-cloud);
+        }
+        
+        .detail-card.middleware {
+            border-top-color: var(--middleware);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>XYZ Retail Group</h1>
+            <p>Hybrid Cloud Architecture Implementation</p>
+        </header>
+        
+        <div class="architecture-diagram">
+            <h2>Cloud Implementation Diagram</h2>
+            <div class="diagram-container">
+                <svg id="cloudArchitecture" width="800" height="500" viewBox="0 0 800 500">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                        refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#9b59b6"/>
+                        </marker>
+                    </defs>
+                    
+                    <!-- Data Flows -->
+                    <path class="data-flow" d="M280,150 Q400,100 520,150"/>
+                    <path class="data-flow" d="M280,250 Q400,300 520,250"/>
+                    <path class="data-flow" d="M280,350 Q400,400 520,350"/>
+                    
+                    <!-- Private Cloud -->
+                    <rect class="cloud private-cloud" x="50" y="100" width="200" height="300" rx="20" ry="20" 
+                        data-modal="private"/>
+                    <text class="component-label" x="150" y="220">Private Cloud</text>
+                    <text class="component-label" x="150" y="240" font-size="10">(Core Systems)</text>
+                    
+                    <!-- Middleware -->
+                    <circle class="cloud middleware" cx="400" cy="250" r="80" data-modal="middleware"/>
+                    <text class="component-label" x="400" y="250">Integration</text>
+                    <text class="component-label" x="400" y="265" font-size="10">Middleware</text>
+                    
+                    <!-- Public Cloud -->
+                    <path class="cloud public-cloud" d="M550,100 Q650,50 750,100 Q800,200 750,300 Q650,350 550,300 Q500,200 550,100 Z" 
+                        data-modal="public"/>
+                    <text class="component-label" x="650" y="220">Public Cloud</text>
+                    <text class="component-label" x="650" y="240" font-size="10">(Customer-facing)</text>
+                    
+                    <!-- Components within Private Cloud -->
+                    <rect x="80" y="130" width="140" height="40" rx="5" ry="5" fill="#fff" stroke="#2c3e50"/>
+                    <text x="150" y="155" font-size="10" text-anchor="middle">POS Systems</text>
+                    
+                    <rect x="80" y="190" width="140" height="40" rx="5" ry="5" fill="#fff" stroke="#2c3e50"/>
+                    <text x="150" y="215" font-size="10" text-anchor="middle">Financial Data</text>
+                    
+                    <rect x="80" y="250" width="140" height="40" rx="5" ry="5" fill="#fff" stroke="#2c3e50"/>
+                    <text x="150" y="275" font-size="10" text-anchor="middle">Legacy ERP</text>
+                    
+                    <rect x="80" y="310" width="140" height="40" rx="5" ry="5" fill="#fff" stroke="#2c3e50"/>
+                    <text x="150" y="335" font-size="10" text-anchor="middle">HR Systems</text>
+                    
+                    <!-- Components within Public Cloud -->
+                    <rect x="580" y="130" width="140" height="40" rx="5" ry="5" fill="#fff" stroke="#3498db"/>
+                    <text x="650" y="155" font-size="10" text-anchor="middle">E-commerce</text>
+                    
+                    <rect x="580" y="190" width="140" height="40" rx="5" ry="5" fill="#fff" stroke="#3498db"/>
+                    <text x="650" y="215" font-size="10" text-anchor="middle">Mobile App</text>
+                    
+                    <rect x="580" y="250" width="140" height="40" rx="5" ry="5" fill="#fff" stroke="#3498db"/>
+                    <text x="650" y="275" font-size="10" text-anchor="middle">AI Analytics</text>
+                    
+                    <rect x="580" y="310" width="140" height="40" rx="5" ry="5" fill="#fff" stroke="#3498db"/>
+                    <text x="650" y="335" font-size="10" text-anchor="middle">CRM</text>
+                </svg>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--private-cloud);"></div>
+                    <span>Private Cloud (On-premises)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--public-cloud);"></div>
+                    <span>Public Cloud (AWS/GCP)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--middleware);"></div>
+                    <span>Integration Middleware</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--data-flow);"></div>
+                    <span>Data Flow</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="component-details">
+            <div class="detail-card private">
+                <h3>Private Cloud Components</h3>
+                <ul>
+                    <li>Core financial transactions</li>
+                    <li>Legacy POS systems</li>
+                    <li>Employee payroll data</li>
+                    <li>PCI-compliant payment processing</li>
+                </ul>
+            </div>
+            
+            <div class="detail-card">
+                <h3>Public Cloud Components</h3>
+                <ul>
+                    <li>Customer-facing e-commerce platform</li>
+                    <li>Mobile application backend</li>
+                    <li>AI recommendation engine</li>
+                    <li>Real-time analytics dashboards</li>
+                </ul>
+            </div>
+            
+            <div class="detail-card middleware">
+                <h3>Integration Services</h3>
+                <ul>
+                    <li>API gateways for data exchange</li>
+                    <li>Inventory synchronization</li>
+                    <li>Customer data unification</li>
+                    <li>Event-driven architecture</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 id="modalTitle">Component Details</h3>
+            <div id="modalContent">
+                <p>Select a component in the diagram to see detailed information.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Modal functionality
+        const modal = document.getElementById('infoModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const closeBtn = document.querySelector('.close-modal');
+        
+        // Component data
+        const components = {
+            public: {
+                title: "Public Cloud Services",
+                content: `<p><strong>Hosted on AWS/Google Cloud Platform:</strong></p>
+                <ul>
+                    <li><strong>E-commerce Platform:</strong> Auto-scaling web storefront with 99.9% uptime SLA</li>
+                    <li><strong>Mobile Backend:</strong> Supports iOS/Android apps with push notifications</li>
+                    <li><strong>AI Services:</strong> Product recommendations, demand forecasting</li>
+                    <li><strong>Customer Analytics:</strong> Real-time dashboards for marketing teams</li>
+                </ul>
+                <p><strong>Security:</strong> Encrypted data transmission, DDoS protection, regular penetration testing</p>`
+            },
+            private: {
+                title: "Private Cloud Systems",
+                content: `<p><strong>On-premises managed infrastructure:</strong></p>
+                <ul>
+                    <li><strong>Financial Systems:</strong> PCI-DSS compliant transaction processing</li>
+                    <li><strong>Legacy POS:</strong> Integrated with cloud via API adapters</li>
+                    <li><strong>HR/Payroll:</strong> Sensitive employee data storage</li>
+                    <li><strong>Inventory Master:</strong> Golden record synchronized hourly with public cloud</li>
+                </ul>
+                <p><strong>Compliance:</strong> GDPR, CCPA, and regional retail regulations</p>`
+            },
+            middleware: {
+                title: "Integration Middleware",
+                content: `<p><strong>Hybrid Cloud Connectivity:</strong></p>
+                <ul>
+                    <li><strong>API Gateway:</strong> 500+ endpoints for system interoperability</li>
+                    <li><strong>Event Bus:</strong> Processes 10,000+ events/second during peak</li>
+                    <li><strong>Data Pipeline:</strong> Bi-directional sync between legacy and cloud systems</li>
+                    <li><strong>Transformation Layer:</strong> Converts between old/new data formats</li>
+                </ul>
+                <p><strong>Monitoring:</strong> 24/7 alerting for integration failures</p>`
+            }
+        };
+        
+        // Add click events to cloud components
+        document.querySelectorAll('.cloud').forEach(component => {
+            component.addEventListener('click', function() {
+                const componentType = this.classList.contains('public-cloud') ? 'public' : 
+                                    this.classList.contains('private-cloud') ? 'private' : 'middleware';
+                modalTitle.textContent = components[componentType].title;
+                modalContent.innerHTML = components[componentType].content;
+                modal.style.display = 'flex';
+            });
+        });
+        
+        // Close modal
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
